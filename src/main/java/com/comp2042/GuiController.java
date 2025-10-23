@@ -19,6 +19,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import javafx.scene.control.Label;  //import label
+
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -50,6 +52,12 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+
+    @FXML
+    private Label scoreLabel;   //label class
+    
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -199,6 +207,7 @@ public class GuiController implements Initializable {
     }
 
     public void bindScore(IntegerProperty integerProperty) {
+        scoreLabel.textProperty().bind(integerProperty.asString("Score: %d")); //Score label
     }
 
     public void gameOver() {

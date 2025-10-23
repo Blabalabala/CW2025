@@ -1,14 +1,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 <?import com.comp2042.GameOverPanel?>
+
+<?import javafx.scene.control.Label?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.comp2042.GuiController">
     <!-- Full background -->
     <GridPane fx:id="brickPanel" hgap="1" vgap="1" />
 
-    <!-- Frame centered -->
+    <!--Total score show on top of frame -->
+    <VBox alignment="CENTER" spacing="10" >
+    <Label fx:id="scoreLabel" text="Score: 0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; -fx-border-color:blue;-fx-border-radius:12;-fx-border-width: 2;
+              -fx-border-radius: 9;
+              -fx-padding: 15;"  />
+
+        <!--Move frame to center -->
     <StackPane alignment="CENTER"
                maxWidth="150" maxHeight="400"
                prefWidth="150" prefHeight="400"
@@ -19,6 +26,7 @@
         <!-- Active falling brick overlay -->
         <Pane fx:id="brickOverlay" pickOnBounds="false" />
     </StackPane>
+    </VBox>
 
     <!-- Notification & Game Over -->
     <Group fx:id="groupNotification">
