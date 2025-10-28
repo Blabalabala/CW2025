@@ -1,5 +1,4 @@
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.Group?>
 <?import java.net.URL?>
 <?import com.comp2042.GameOverPanel?>
 
@@ -9,31 +8,40 @@
     <!-- Full background -->
     <GridPane fx:id="brickPanel" hgap="1" vgap="1" />
 
-    <!--Total score show on top of frame -->
-    <VBox alignment="CENTER" spacing="10" >
-    <Label fx:id="scoreLabel" text="Score: 0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; -fx-border-color:blue;-fx-border-radius:12;-fx-border-width: 2;
+    <!--Timer show beside of frame -->
+    <HBox alignment="CENTER" spacing="10" >
+        <Label fx:id="timerLabel" text="Timer: 3:00" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; -fx-border-color:blue;-fx-border-radius:12;-fx-border-width: 2;
+              -fx-border-radius: 9;
+              -fx-padding: 15;"  />
+    <HBox alignment="CENTER" spacing="10" >
+        <Label fx:id="linesLabel" text="Lines: 0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; -fx-border-color:blue;-fx-border-radius:12;-fx-border-width: 2;
+              -fx-border-radius: 9;
+              -fx-padding: 15;"  />
+
+        <!--Total score show on top of frame -->
+        <VBox alignment="CENTER" spacing="10" >
+            <Label fx:id="scoreLabel" text="Score: 0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; -fx-border-color:blue;-fx-border-radius:12;-fx-border-width: 2;
               -fx-border-radius: 9;
               -fx-padding: 15;"  />
 
         <!--Move frame to center -->
-    <StackPane alignment="CENTER"
-               maxWidth="150" maxHeight="400"
+    <StackPane
+            maxWidth="150" maxHeight="400"
                prefWidth="150" prefHeight="400"
                styleClass="gameBoard">
         <!-- Background grid -->
-        <GridPane fx:id="gamePanel" hgap="0" vgap="1" />
+        <GridPane fx:id="gamePanel" vgap="1" />
 
         <!-- Active falling brick overlay -->
         <Pane fx:id="brickOverlay" pickOnBounds="false" />
+        <!-- Notification & Game Over -->
+        <GameOverPanel fx:id="gameOverPanel" StackPane.alignment="CENTER" />
+
     </StackPane>
     </VBox>
+</HBox>
+    </HBox>
 
-    <!-- Notification & Game Over -->
-    <Group fx:id="groupNotification">
-        <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel" />
-        </VBox>
-    </Group>
 
     <stylesheets>
         <URL value="@window_style.css"/>

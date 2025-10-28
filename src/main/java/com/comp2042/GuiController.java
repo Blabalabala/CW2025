@@ -55,8 +55,14 @@ public class GuiController implements Initializable {
 
     @FXML
     private Label scoreLabel;   //label class
-    
 
+    @FXML
+    private Label timerLabel;   //timer class
+    private Timeline timerTimeline;
+    private int timeRemaining = 180; // 180 seconds
+
+    @FXML
+    private Label linesLabel;  //lines class
 
 
     @Override
@@ -136,6 +142,7 @@ public class GuiController implements Initializable {
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+        startCountdownTimer();   //countdown start
     }
 
     private Paint getFillColor(int i) {
@@ -210,10 +217,45 @@ public class GuiController implements Initializable {
         scoreLabel.textProperty().bind(integerProperty.asString("Score: %d")); //Score label
     }
 
+    private void startCountdownTimer() {
+        if (timerTimeline != null) {
+            timerTimeline.stop(); // stop old timer if running
+        }
+
+        // Reset label and start
+        updateTimerLabel();
+
+        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            timeRemaining--;
+            updateTimerLabel();
+
+            if (timeRemaining <= 0) {
+                timerTimeline.stop();
+                gameOver(); // Time’s up, game over display
+            }
+        }));
+
+        timerTimeline.setCycleCount(Timeline.INDEFINITE);
+        timerTimeline.play();
+    }
+
+    // helper method to format time
+    private void updateTimerLabel() {
+        int minutes = timeRemaining / 60;
+        int seconds = timeRemaining % 60;
+        timerLabel.setText(String.format(" %d:%02d", minutes, seconds));
+    }
+
+
+    public void lineScore(IntegerProperty integerProperty) {
+        linesLabel.textProperty().bind(integerProperty.asString("Lines: %d")); //Line label
+    }
+
     public void gameOver() {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
+        timerTimeline.stop();    //time stop when game over
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -224,7 +266,12 @@ public class GuiController implements Initializable {
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+
+        // Reset timer
+        timeRemaining = 180; // 3 minutes
+        startCountdownTimer();
     }
+
 
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
