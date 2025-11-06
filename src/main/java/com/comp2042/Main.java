@@ -23,6 +23,7 @@ public class Main extends Application {
         primaryStage.setTitle("TetrisJFX");
         Scene scene = new Scene(root, 300, 510);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);    //Full screen
         primaryStage.show();
         new GameController(c);
     }

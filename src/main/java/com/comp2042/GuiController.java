@@ -10,11 +10,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -28,6 +30,8 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    public Button pauseButton;
+    public StackPane pauseMenu;
 
     @FXML
     private GridPane gamePanel; // background board
@@ -63,6 +67,7 @@ public class GuiController implements Initializable {
 
     @FXML
     private Label linesLabel;  //lines class
+
 
 
     @Override
@@ -273,7 +278,37 @@ public class GuiController implements Initializable {
     }
 
 
+    public void resumeGame(ActionEvent actionEvent) {
+        pauseMenu.setVisible(false);
+        isPause.set(false);
+        timeLine.play();
+        if (timerTimeline != null) timerTimeline.play();
+        pauseButton.setText("⏸");
+        gamePanel.requestFocus();
+    }
+
+    public void exitGame(ActionEvent actionEvent) {
+        // Close the game window
+        System.out.println("Exiting game");
+        System.exit(0); // or switch scene to main menu
+    }
+
     public void pauseGame(ActionEvent actionEvent) {
+        if (isPause.get()) {
+            // Resume
+            timeLine.play();
+            if (timerTimeline != null) timerTimeline.play();
+            pauseButton.setText("⏸");
+            isPause.set(false);
+            pauseMenu.setVisible(false); // hide pause menu
+        } else {
+            // Pause
+            timeLine.pause();
+            if (timerTimeline != null) timerTimeline.pause();
+            pauseButton.setText("▶");
+            isPause.set(true);
+            pauseMenu.setVisible(true);  // show pause menu
+        }
         gamePanel.requestFocus();
     }
 }
