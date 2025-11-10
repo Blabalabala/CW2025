@@ -14,6 +14,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        MusicPlayerWav musicPlayer = new MusicPlayerWav();
+        musicPlayer.playMusic("/chill_music.wav");   //play background music
+
         URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
         ResourceBundle resources = null;
         FXMLLoader fxmlLoader = new FXMLLoader(location, resources);
@@ -29,7 +32,4 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
