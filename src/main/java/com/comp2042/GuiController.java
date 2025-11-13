@@ -48,7 +48,7 @@ public class GuiController implements Initializable {
     private Pane brickOverlay;
 
     @FXML
-    private Group groupNotification;
+    private Pane groupNotification;
 
     @FXML
     private GridPane brickPanel;

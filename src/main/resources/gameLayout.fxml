@@ -62,6 +62,7 @@
             <GridPane fx:id="gamePanel" vgap="1" />
             <!-- Active falling brick overlay -->
             <Pane fx:id="brickOverlay" pickOnBounds="false" />
+            <Pane fx:id="groupNotification" pickOnBounds="false" />
             <!-- Notification & Game Over -->
             <GameOverPanel fx:id="gameOverPanel" StackPane.alignment="CENTER" />
         </StackPane>

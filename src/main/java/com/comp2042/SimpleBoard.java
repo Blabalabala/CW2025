@@ -111,8 +111,9 @@ public class SimpleBoard implements Board {
         int rowsCleared = clearRow.getLinesRemoved();
 
         if (rowsCleared > 0) {
-            score.add(rowsCleared * 100);  // add score
-            score.addLine(rowsCleared);    // add lines
+            int points = rowsCleared -1;
+            score.add(points);             // main score
+            score.addLine(rowsCleared);    // line counter
         }
 
         return clearRow;
