@@ -40,6 +40,8 @@ public class GuiController implements Initializable {
 
     @FXML
     private ImageView minTens, minOnes, secTens, secOnes;  //image for timer
+    @FXML
+    private ImageView lineHundreds, lineTens, lineOnes;
 
     @FXML
     private GridPane gamePanel;
@@ -68,20 +70,14 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
-    @FXML
-    private Label scoreLabel;
-    @FXML
-    private Label timerLabel;
-    @FXML
-    private Label linesLabel;
+    @FXML private ImageView scoreHundreds;
+    @FXML private ImageView scoreTens;
+    @FXML private ImageView scoreOnes;
+
 
     private int timeRemaining = 180;
     private Image[] digits = new Image[10];
 
-    @FXML
-    private ImageView lineHundreds;
-    private ImageView lineTens;
-    private ImageView lineOnes;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -119,6 +115,11 @@ public class GuiController implements Initializable {
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
+
+        loadDigitImages();
+        updateScoreImages(0);
+        updateLineImages(0);
+
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -265,12 +266,16 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    public void bindScore(IntegerProperty integerProperty) {
-        scoreLabel.textProperty().bind(integerProperty.asString(": %d"));
+    public void bindScore(IntegerProperty scoreProperty) {
+        scoreProperty.addListener((obs, oldVal, newVal) -> {
+            updateScoreImages(newVal.intValue());
+        });
     }
 
-    public void lineScore(IntegerProperty integerProperty) {
-        linesLabel.textProperty().bind(integerProperty.asString(": %d"));
+    public void lineScore(IntegerProperty lineProperty) {
+        lineProperty.addListener((obs, oldVal, newVal) -> {
+            updateLineImages(newVal.intValue());
+        });
     }
 
     public void gameOver() {
@@ -350,5 +355,23 @@ public class GuiController implements Initializable {
         timerTimeline.setCycleCount(Timeline.INDEFINITE);
         timerTimeline.play();
     }
+    private void updateScoreImages(int score) {
+        int hundreds = (score / 100) % 10;
+        int tens = (score / 10) % 10;
+        int ones = score % 10;
 
+        scoreHundreds.setImage(digits[hundreds]);
+        scoreTens.setImage(digits[tens]);
+        scoreOnes.setImage(digits[ones]);
+    }
+
+    private void updateLineImages(int lines) {
+        int hundreds = (lines / 100) % 10;
+        int tens = (lines / 10) % 10;
+        int ones = lines % 10;
+
+        lineHundreds.setImage(digits[hundreds]);
+        lineTens.setImage(digits[tens]);
+        lineOnes.setImage(digits[ones]);
+    }
 }

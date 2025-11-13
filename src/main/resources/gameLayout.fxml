@@ -12,11 +12,11 @@
     <GridPane fx:id="brickPanel" hgap="1" vgap="1" />
 
     <!-- Timer and number of line clear show beside of the frame -->
-    <HBox alignment="CENTER" spacing="5">
+    <HBox alignment="CENTER" spacing="20">
 
-        <VBox alignment="CENTER" spacing="10">
+        <VBox alignment="CENTER" spacing="15">
 
-            <!--Timer and Line clear show on the left side of the frame-->
+            <!-- Timer -->
             <HBox spacing="2" alignment="CENTER">
                 <ImageView fx:id="minTens" fitWidth="30" fitHeight="40"/>
                 <ImageView fx:id="minOnes" fitWidth="30" fitHeight="40"/>
@@ -25,66 +25,70 @@
                 <ImageView fx:id="secOnes" fitWidth="30" fitHeight="40"/>
             </HBox>
 
-            <!-- LINE COUNTER (Below timer) -->
-            <Label fx:id="linesLabel" text="0"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;">
-                <graphic>
-                    <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
-                        <image>
-                            <Image url="Line.png" />
-                        </image>
-                    </ImageView>
-                </graphic>
-            </Label>
-        </VBox>
-
-
-
-
-        <!--Total score show on top of frame -->
-        <VBox alignment="CENTER" spacing="10">
-        <Label fx:id="scoreLabel" text=" 0"
-               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" >
-            <graphic>
-                <ImageView fitWidth="70" fitHeight="70" preserveRatio="true">
+            <!-- Line -->
+            <VBox alignment="CENTER" spacing="5">
+                <ImageView fitWidth="120" fitHeight="40" preserveRatio="true">
                     <image>
-                        <Image url="Score.png" />
+                        <Image url="@Line.png" />
                     </image>
                 </ImageView>
-            </graphic>
-        </Label>
-        <!-- Move frame to center -->
-        <StackPane
-                maxWidth="150" maxHeight="400"
-                prefWidth="150" prefHeight="400"
-                styleClass="gameBoard">
-            <!-- Background gris -->
-            <GridPane fx:id="gamePanel" vgap="1" />
-            <!-- Active falling brick overlay -->
-            <Pane fx:id="brickOverlay" pickOnBounds="false" />
-            <Pane fx:id="groupNotification" pickOnBounds="false" />
-            <!-- Notification & Game Over -->
-            <GameOverPanel fx:id="gameOverPanel" StackPane.alignment="CENTER" />
-        </StackPane>
+
+                <HBox fx:id="linesDisplay" spacing="2" alignment="CENTER">
+                    <ImageView fx:id="lineHundreds" fitWidth="20" fitHeight="30" />
+                    <ImageView fx:id="lineTens" fitWidth="20" fitHeight="30" />
+                    <ImageView fx:id="lineOnes" fitWidth="20" fitHeight="30" />
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <VBox alignment="CENTER" spacing="15">
+
+            <!-- Score -->
+            <HBox alignment="CENTER" spacing="-15">
+                <ImageView fitWidth="70" fitHeight="40" preserveRatio="true">
+                    <image>
+                        <Image url="@Score.png" />
+                    </image>
+                </ImageView>
+
+                <HBox fx:id="scoreDisplay" spacing="2" alignment="CENTER">
+                    <ImageView fx:id="scoreThousands" fitWidth="20" fitHeight="30" />
+                    <ImageView fx:id="scoreHundreds" fitWidth="20" fitHeight="30" />
+                    <ImageView fx:id="scoreTens" fitWidth="20" fitHeight="30" />
+                    <ImageView fx:id="scoreOnes" fitWidth="20" fitHeight="30" />
+                </HBox>
+            </HBox>
+
+            <!-- Game Board -->
+            <StackPane
+                    maxWidth="150" maxHeight="400"
+                    prefWidth="150" prefHeight="400"
+                    styleClass="gameBoard">
+                <GridPane fx:id="gamePanel" vgap="1" />
+                <Pane fx:id="brickOverlay" pickOnBounds="false" />
+                <Pane fx:id="groupNotification" pickOnBounds="false" />
+                <GameOverPanel fx:id="gameOverPanel" StackPane.alignment="CENTER" />
+            </StackPane>
         </VBox>
     </HBox>
 
-    <!-- Pause Button -->
-    <VBox alignment="TOP_RIGHT" spacing="10" StackPane.alignment="TOP_RIGHT" style="-fx-padding: 10;">
+    <!-- PAUSE BUTTON -->
+    <VBox alignment="TOP_RIGHT" spacing="10"
+          StackPane.alignment="TOP_RIGHT" style="-fx-padding: 10;">
         <Button fx:id="pauseButton" onAction="#pauseGame"
-                style="-fx-font-size: 16px; -fx-font-weight: bold;-fx-background-color: transparent; -fx-padding: 0; ">
-
-        <graphic>
-            <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
-                <image>
-                    <Image url="pause.png" />
-                </image>
-            </ImageView>
-        </graphic>
+                style="-fx-font-size: 16px; -fx-font-weight: bold;
+                       -fx-background-color: transparent; -fx-padding: 0;">
+            <graphic>
+                <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
+                    <image>
+                        <Image url="@pause.png" />
+                    </image>
+                </ImageView>
+            </graphic>
         </Button>
     </VBox>
 
-    <!-- Pause Menu -->
+    <!-- Pause menu -->
     <StackPane fx:id="pauseMenu" visible="false"
                style="-fx-background-color: rgba(0, 0, 0, 0.6);"
                StackPane.alignment="CENTER">
