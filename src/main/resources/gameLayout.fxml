@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.comp2042.GuiController">
     <!-- Full background -->
     <GridPane fx:id="brickPanel" hgap="1" vgap="1" />
@@ -13,21 +15,44 @@
     <HBox alignment="CENTER" spacing="5">
 
         <VBox alignment="CENTER" spacing="10">
-            <Label fx:id="timerLabel" text="Timer: 3:00"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;
-                          -fx-border-color:blue; -fx-border-radius:12; -fx-border-width: 2;
-                          -fx-padding: 10;" />
-            <Label fx:id="linesLabel" text="Lines: 0"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;
-                          -fx-border-color:blue; -fx-border-radius:12; -fx-border-width: 2;
-                          -fx-padding: 10;" />
-            <!--Total score show on top of frame -->
+
+            <!--Timer and Line clear show on the left side of the frame-->
+            <HBox spacing="2" alignment="CENTER">
+                <ImageView fx:id="minTens" fitWidth="30" fitHeight="40"/>
+                <ImageView fx:id="minOnes" fitWidth="30" fitHeight="40"/>
+                <Label text=":" style="-fx-font-size: 24; -fx-text-fill: white;"/>
+                <ImageView fx:id="secTens" fitWidth="30" fitHeight="40"/>
+                <ImageView fx:id="secOnes" fitWidth="30" fitHeight="40"/>
+            </HBox>
+
+            <!-- LINE COUNTER (Below timer) -->
+            <Label fx:id="linesLabel" text="0"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;">
+                <graphic>
+                    <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
+                        <image>
+                            <Image url="Line.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Label>
         </VBox>
+
+
+
+
+        <!--Total score show on top of frame -->
         <VBox alignment="CENTER" spacing="10">
-        <Label fx:id="scoreLabel" text="Score: 0"
-               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;
-                      -fx-border-color:blue; -fx-border-radius:12; -fx-border-width: 2;
-                      -fx-padding: 10;" />
+        <Label fx:id="scoreLabel" text=" 0"
+               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" >
+            <graphic>
+                <ImageView fitWidth="70" fitHeight="70" preserveRatio="true">
+                    <image>
+                        <Image url="Score.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Label>
         <!-- Move frame to center -->
         <StackPane
                 maxWidth="150" maxHeight="400"
@@ -45,10 +70,17 @@
 
     <!-- Pause Button -->
     <VBox alignment="TOP_RIGHT" spacing="10" StackPane.alignment="TOP_RIGHT" style="-fx-padding: 10;">
-        <Button fx:id="pauseButton" text="⏸" onAction="#pauseGame"
-                style="-fx-font-size: 16px; -fx-font-weight: bold;
-                       -fx-background-color: #3366ff; -fx-text-fill: white;
-                       -fx-background-radius: 10; -fx-padding: 8 15;" />
+        <Button fx:id="pauseButton" onAction="#pauseGame"
+                style="-fx-font-size: 16px; -fx-font-weight: bold;-fx-background-color: transparent; -fx-padding: 0; ">
+
+        <graphic>
+            <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
+                <image>
+                    <Image url="pause.png" />
+                </image>
+            </ImageView>
+        </graphic>
+        </Button>
     </VBox>
 
     <!-- Pause Menu -->
