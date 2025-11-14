@@ -15,6 +15,7 @@ public class SimpleBoard implements Board {
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final Score score;
+    private Brick nextBrick;
 
     public SimpleBoard(int width, int height) {
         this.width = width;
@@ -82,9 +83,15 @@ public class SimpleBoard implements Board {
 
     @Override
     public boolean createNewBrick() {
-        Brick currentBrick = brickGenerator.getBrick();
+        // If nextBrick exists, make it the current brick
+        Brick currentBrick = nextBrick != null ? nextBrick : brickGenerator.getBrick();
+
         brickRotator.setBrick(currentBrick);
-        currentOffset = new Point(4, 2); //brick spawn more on top
+
+        // Generate the next brick
+        nextBrick = brickGenerator.getBrick();
+
+        currentOffset = new Point(4, 2); // brick spawn at top
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 
@@ -111,7 +118,7 @@ public class SimpleBoard implements Board {
         int rowsCleared = clearRow.getLinesRemoved();
 
         if (rowsCleared > 0) {
-            int points = rowsCleared -1;
+            int points = rowsCleared - 1;
             score.add(points);             // main score
             score.addLine(rowsCleared);    // line counter
         }
@@ -130,4 +137,12 @@ public class SimpleBoard implements Board {
         score.reset();
         createNewBrick();
     }
+
+    //Return next shape information
+    @Override
+    public NextShapeInfo getNextShape() {
+      if (nextBrick == null) return null;
+      return new NextShapeInfo(nextBrick.getShapeMatrix().get(0), 0); // 0 is the default rotation index
+   }
+
 }

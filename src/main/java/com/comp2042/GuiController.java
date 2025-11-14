@@ -74,6 +74,10 @@ public class GuiController implements Initializable {
     @FXML private ImageView scoreTens;
     @FXML private ImageView scoreOnes;
 
+    @FXML
+    private GridPane nextBlockPane;
+
+
 
     private int timeRemaining = 180;
     private Image[] digits = new Image[10];
@@ -374,4 +378,29 @@ public class GuiController implements Initializable {
         lineTens.setImage(digits[tens]);
         lineOnes.setImage(digits[ones]);
     }
+
+    //show next block
+    private static final int BLOCK_SIZE = 20;
+
+    public void showNextBlock(NextShapeInfo next) {
+        nextBlockPane.getChildren().clear(); // clear previous preview
+
+        int[][] shape = next.getShape();
+
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                if (shape[i][j] != 0) {
+                    Rectangle rect = new Rectangle(BLOCK_SIZE, BLOCK_SIZE);
+                    rect.setFill(getFillColor(shape[i][j])); // reuse your color method
+                    rect.setArcWidth(6);
+                    rect.setArcHeight(6);
+                    rect.setStroke(Color.BLACK);
+                    rect.setStrokeWidth(1);
+
+                    nextBlockPane.add(rect, j, i);
+                }
+            }
+        }
+    }
+
 }

@@ -5,13 +5,18 @@ public class GameController implements InputEventListener {
     private final Board board = new SimpleBoard(25, 10);
     private final GuiController viewGuiController;
 
-    public GameController(GuiController c) {
-        viewGuiController = c;
-        board.createNewBrick();
+    public GameController(GuiController guiController) {
+        this.viewGuiController = guiController;
         viewGuiController.setEventListener(this);
+
+        // Initialize the first brick and game view
+        board.createNewBrick();
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
-        viewGuiController.lineScore(board.getScore().lineProperty());   //to display number of line clear
+        viewGuiController.lineScore(board.getScore().lineProperty());
+
+        // Show the first next block preview
+        updateNextBlock();
     }
 
     @Override
@@ -28,6 +33,8 @@ public class GameController implements InputEventListener {
                 viewGuiController.gameOver();
             }
 
+            // Update next block preview
+            updateNextBlock();
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
         }
         return new DownData(clearRow, board.getViewData());
@@ -54,9 +61,14 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
+        board.createNewBrick();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
-    }
+        viewGuiController.bindScore(board.getScore().scoreProperty());
+        viewGuiController.lineScore(board.getScore().lineProperty());
 
+        // Show next block
+        updateNextBlock();
+    }
 
     //prevent brick from colliding with other brick
     @Override
@@ -78,5 +90,13 @@ public class GameController implements InputEventListener {
             }
         }
         return true;
+    }
+
+    //Updates the Next Block preview in the GUI
+    private void updateNextBlock() {
+        NextShapeInfo nextShape = board.getNextShape();
+        if (nextShape != null) {
+            viewGuiController.showNextBlock(nextShape);
+        }
     }
 }
