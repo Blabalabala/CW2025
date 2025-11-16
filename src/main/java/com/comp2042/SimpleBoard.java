@@ -119,7 +119,6 @@ public class SimpleBoard implements Board {
 
         if (rowsCleared > 0) {
             int points = rowsCleared - 1;
-            score.add(points);             // main score
             score.addLine(rowsCleared);    // line counter
         }
 

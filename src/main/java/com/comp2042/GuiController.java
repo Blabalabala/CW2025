@@ -70,12 +70,13 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    @FXML private ImageView scoreThousands;
     @FXML private ImageView scoreHundreds;
     @FXML private ImageView scoreTens;
     @FXML private ImageView scoreOnes;
 
     @FXML
-    private GridPane nextBlockPane;
+    private Pane nextBlockPane;
 
 
 
@@ -360,10 +361,12 @@ public class GuiController implements Initializable {
         timerTimeline.play();
     }
     private void updateScoreImages(int score) {
+        int thousands = (score / 1000) % 10;
         int hundreds = (score / 100) % 10;
         int tens = (score / 10) % 10;
         int ones = score % 10;
 
+        scoreThousands.setImage(digits[thousands]);
         scoreHundreds.setImage(digits[hundreds]);
         scoreTens.setImage(digits[tens]);
         scoreOnes.setImage(digits[ones]);
@@ -386,18 +389,55 @@ public class GuiController implements Initializable {
         nextBlockPane.getChildren().clear(); // clear previous preview
 
         int[][] shape = next.getShape();
+        int shapeRows = shape.length;
+        int shapeCols = shape[0].length;
 
-        for (int i = 0; i < shape.length; i++) {
-            for (int j = 0; j < shape[i].length; j++) {
+        double paneWidth = nextBlockPane.getPrefWidth();
+        double paneHeight = nextBlockPane.getPrefHeight();
+
+        // Find topmost, bottommost, leftmost, rightmost filled blocks
+        int top = shapeRows, bottom = -1, left = shapeCols, right = -1;
+        for (int i = 0; i < shapeRows; i++) {
+            for (int j = 0; j < shapeCols; j++) {
                 if (shape[i][j] != 0) {
-                    Rectangle rect = new Rectangle(BLOCK_SIZE, BLOCK_SIZE);
-                    rect.setFill(getFillColor(shape[i][j])); // reuse your color method
-                    rect.setArcWidth(6);
-                    rect.setArcHeight(6);
+                    if (i < top) top = i;
+                    if (i > bottom) bottom = i;
+                    if (j < left) left = j;
+                    if (j > right) right = j;
+                }
+            }
+        }
+
+        int usedRows = bottom - top + 1;
+        int usedCols = right - left + 1;
+
+        // Scale block size to fit the pane
+        double padding = 10; // optional padding inside the preview box
+        double blockWidth = (paneWidth - padding * 2) / usedCols;
+        double blockHeight = (paneHeight - padding * 2) / usedRows;
+        double blockSize = Math.min(blockWidth, blockHeight);
+
+        // Make blocks smaller by multiplying by a factor (<1)
+        blockSize *= 0.8; // 80% of available size
+
+        // Calculate offsets to center the used blocks
+        double offsetX = (paneWidth - usedCols * blockSize) / 2;
+        double offsetY = (paneHeight - usedRows * blockSize) / 2;
+
+        for (int i = 0; i < shapeRows; i++) {
+            for (int j = 0; j < shapeCols; j++) {
+                if (shape[i][j] != 0) {
+                    Rectangle rect = new Rectangle(blockSize, blockSize);
+                    rect.setFill(getFillColor(shape[i][j]));
+                    rect.setArcWidth(blockSize / 4);
+                    rect.setArcHeight(blockSize / 4);
                     rect.setStroke(Color.BLACK);
                     rect.setStrokeWidth(1);
 
-                    nextBlockPane.add(rect, j, i);
+                    rect.setLayoutX((j - left) * blockSize + offsetX);
+                    rect.setLayoutY((i - top) * blockSize + offsetY);
+
+                    nextBlockPane.getChildren().add(rect);
                 }
             }
         }
