@@ -69,14 +69,17 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
-    @FXML private ImageView scoreThousands;
-    @FXML private ImageView scoreHundreds;
-    @FXML private ImageView scoreTens;
-    @FXML private ImageView scoreOnes;
+    @FXML
+    private ImageView scoreThousands;
+    @FXML
+    private ImageView scoreHundreds;
+    @FXML
+    private ImageView scoreTens;
+    @FXML
+    private ImageView scoreOnes;
 
     @FXML
     private Pane nextBlockPane;
-
 
 
     private int timeRemaining = 180;
@@ -162,8 +165,6 @@ public class GuiController implements Initializable {
                 brickOverlay.getChildren().add(active);
             }
         }
-
-
 
 
         timeLine = new Timeline(new KeyFrame(
@@ -439,6 +440,28 @@ public class GuiController implements Initializable {
                     nextBlockPane.getChildren().add(rect);
                 }
             }
+        }
+    }
+
+//restart game
+    public void restartGame() {
+        if (eventListener != null) {
+            if (timeLine != null) timeLine.stop();
+            if (timerTimeline != null) timerTimeline.stop();
+
+            gameOverPanel.setVisible(false);
+
+            isPause.set(false);
+            isGameOver.set(false);
+
+            timeRemaining = 180;
+
+            eventListener.createNewGame();
+
+            gamePanel.requestFocus();
+            
+            if (timeLine != null) timeLine.play();
+            startTimer();
         }
     }
 

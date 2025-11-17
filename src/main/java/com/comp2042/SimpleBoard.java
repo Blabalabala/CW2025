@@ -91,7 +91,13 @@ public class SimpleBoard implements Board {
         // Generate the next brick
         nextBrick = brickGenerator.getBrick();
 
-        currentOffset = new Point(4, 2); // brick spawn at top
+        //make brick spawn more center and higher
+        int[][] shape = brickRotator.getCurrentShape();
+        int shapeWidth = shape[0].length;
+
+        int centerX = (height - shapeWidth) / 2;
+        currentOffset = new Point(centerX, 0);
+
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 

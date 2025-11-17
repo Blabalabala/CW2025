@@ -111,12 +111,27 @@
 
     </HBox>
 
-    <!-- PAUSE BUTTON -->
-    <VBox alignment="TOP_RIGHT" spacing="10"
+    <HBox alignment="TOP_RIGHT" spacing="10"
           StackPane.alignment="TOP_RIGHT" style="-fx-padding: 10;">
+
+
+        <!-- Restart button -->
+        <Button fx:id="restartButton" onAction="#restartGame"
+                style="-fx-font-size: 16px; -fx-font-weight: bold;
+               -fx-background-color: transparent; -fx-padding: 0;">
+            <graphic>
+                <ImageView fitWidth="100" fitHeight="100" preserveRatio="true">
+                    <image>
+                        <Image url="@Restart.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+
+        <!-- Pause button -->
         <Button fx:id="pauseButton" onAction="#pauseGame"
                 style="-fx-font-size: 16px; -fx-font-weight: bold;
-                       -fx-background-color: transparent; -fx-padding: 0;">
+               -fx-background-color: transparent; -fx-padding: 0;">
             <graphic>
                 <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
                     <image>
@@ -125,7 +140,7 @@
                 </ImageView>
             </graphic>
         </Button>
-    </VBox>
+    </HBox>
 
     <!-- Pause menu -->
     <StackPane fx:id="pauseMenu" visible="false"
