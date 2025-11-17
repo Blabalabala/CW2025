@@ -33,7 +33,6 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
-    private static final int HIDDEN_ROWS = 2;
 
     public Button pauseButton;
     public StackPane pauseMenu;
@@ -199,7 +198,7 @@ public class GuiController implements Initializable {
                 r.setVisible(value != 0);
                 r.setFill(getFillColor(value));
                 r.setX((brick.getxPosition() + j) * BRICK_SIZE);
-                r.setY((brick.getyPosition() + i - HIDDEN_ROWS) * BRICK_SIZE);
+                r.setY((brick.getyPosition() + i) * BRICK_SIZE);
             }
         }
 
