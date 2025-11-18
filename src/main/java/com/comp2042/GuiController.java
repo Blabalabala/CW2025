@@ -9,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
@@ -24,7 +23,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
-import javafx.scene.control.Label;  //import label
 
 
 import java.net.URL;
@@ -84,6 +82,8 @@ public class GuiController implements Initializable {
 
     private int timeRemaining = 180;
     private Image[] digits = new Image[10];
+    private Rectangle[][] ghostPieceRectangles;
+
 
 
     @Override
@@ -108,6 +108,10 @@ public class GuiController implements Initializable {
                     }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+                        keyEvent.consume();
+                    }
+                    if (keyEvent.getCode() == KeyCode.SPACE) {
+                        hardDrop();
                         keyEvent.consume();
                     }
                 }
@@ -203,37 +207,7 @@ public class GuiController implements Initializable {
             }
         }
 
-        // Ghost brick
-        int ghostY = calculateGhostY(brick) - 1;
-
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle g = ghostBrick[i][j];
-                int value = brick.getBrickData()[i][j];
-
-                if (value == 0) {
-                    g.setVisible(false);
-                    continue;
-                }
-
-                g.setVisible(true);
-                g.setFill(getFillColor(value));
-                g.setOpacity(0.25);
-                g.setX((brick.getxPosition() + j) * BRICK_SIZE);
-                g.setY((ghostY + i ) * BRICK_SIZE);  // same offset rule
-            }
         }
-    }
-
-    private int calculateGhostY(ViewData brick) {
-        int ghostY = brick.getyPosition();
-        // keep moving down until collision
-        while (eventListener.canMoveDown(brick, ghostY + 1)) {
-            ghostY++;
-        }
-        return ghostY;
-    }
-
     private void refreshBrick(ViewData brick) {
         if (!isPause.get()) {
             updateBrickPosition(brick);
@@ -465,4 +439,70 @@ public class GuiController implements Initializable {
         }
     }
 
+    //Remove old ghost piece
+    public void clearGhostPiece() {
+        if (ghostPieceRectangles != null) {
+            for (int i = 0; i < ghostPieceRectangles.length; i++) {
+                for (int j = 0; j < ghostPieceRectangles[i].length; j++) {
+                    if (ghostPieceRectangles[i][j] != null) {
+                        gamePanel.getChildren().remove(ghostPieceRectangles[i][j]);
+                        ghostPieceRectangles[i][j] = null;
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    public void drawGhostPiece(int[][] ghostData) {
+        clearGhostPiece();  // remove previous ghost bricks
+
+        // Extract ghost position from the last row of ghostData
+        int ghostX = ghostData[4][0];
+        int ghostY = ghostData[4][1];
+
+        ghostPieceRectangles = new Rectangle[4][4];
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (ghostData[i][j] != 0) {
+                    Rectangle ghostRect = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+
+                    Color pieceColor = (Color) getFillColor(ghostData[i][j]);
+                    Color ghostColor = new Color(pieceColor.getRed(), pieceColor.getGreen(), pieceColor.getBlue(), 0.3);
+
+                    ghostRect.setFill(ghostColor);
+                    ghostRect.setStroke(Color.WHITE);
+                    ghostRect.setStrokeWidth(1);
+                    ghostRect.setArcHeight(9);
+                    ghostRect.setArcWidth(9);
+
+                    // Use GridPane coordinates, no +1
+                    gamePanel.add(ghostRect, ghostX + j, ghostY + i);
+
+                    ghostPieceRectangles[i][j] = ghostRect;
+                }
+            }
+        }
+    }
+
+    private void hardDrop() {
+        if (eventListener != null && !isPause.get() && !isGameOver.get()) {
+            DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
+            refreshBrick(downData.getViewData());
+
+            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
+                groupNotification.getChildren().add(notificationPanel);
+                notificationPanel.showScore(groupNotification.getChildren());
+            }
+        }
+    }
+
 }
+
+
+
+
+
