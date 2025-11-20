@@ -1,10 +1,23 @@
 package com.comp2042;
 
+/**
+ * The GameController class handles the game logic for Tetris,
+ * including user input, brick movement, collision checking,
+ * ghost piece calculation, scoring, and updating the GUI.
+ * It implements the InputEventListener interface to respond
+ * to user and thread events.
+ */
 public class GameController implements InputEventListener {
 
     private final Board board = new SimpleBoard(25, 10);
     private final GuiController viewGuiController;
 
+    /**
+     * Constructs a GameController with a specified GUI controller.
+     * Initializes the first brick, binds scores, and updates the next block preview.
+     *
+     * @param guiController the GUI controller managing the game's visual elements
+     */
     public GameController(GuiController guiController) {
         this.viewGuiController = guiController;
         viewGuiController.setEventListener(this);
@@ -19,6 +32,14 @@ public class GameController implements InputEventListener {
         updateNextBlock();
     }
 
+    /**
+     * Handles the "down" move event.
+     * Moves the current brick down if possible, merges it if blocked,
+     * clears completed rows, updates score, and refreshes the GUI.
+     *
+     * @param event the move event containing event type and source
+     * @return DownData object containing clear row info, updated view data, and lock status
+     */
     @Override
     public DownData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
@@ -46,6 +67,13 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData(), locked);
     }
 
+    /**
+     * Handles the "left" move event.
+     * Moves the current brick left if possible and updates the ghost piece.
+     *
+     * @param event the move event containing event type and source
+     * @return updated ViewData of the brick
+     */
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
@@ -53,6 +81,13 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
+    /**
+     * Handles the "right" move event.
+     * Moves the current brick right if possible and updates the ghost piece.
+     *
+     * @param event the move event containing event type and source
+     * @return updated ViewData of the brick
+     */
     @Override
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
@@ -60,6 +95,13 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
+    /**
+     * Handles the "rotate" event.
+     * Rotates the current brick if possible and updates the ghost piece.
+     *
+     * @param event the move event containing event type and source
+     * @return updated ViewData of the brick
+     */
     @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
@@ -67,6 +109,9 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
+    /**
+     * New game after restart
+     */
     @Override
     public void createNewGame() {
         board.newGame();
@@ -79,7 +124,16 @@ public class GameController implements InputEventListener {
         updateNextBlock();
     }
 
-    //prevent brick from colliding with other brick
+    /**
+     * Checks whether the current brick can move down to a new Y position without
+     * colliding with existing blocks or going out of the board's boundaries.
+     *
+     *
+     * @param brick the current brick's view data, including shape and position
+     * @param newY the proposed new Y-coordinate after moving down
+     * @return true if the brick can safely move down; false if a collision would occur
+     */
+
     @Override
     public boolean canMoveDown(ViewData brick, int newY) {
         final int HIDDEN_ROWS = 2;
@@ -101,7 +155,9 @@ public class GameController implements InputEventListener {
         return true;
     }
 
-    //Updates the Next Block preview in the GUI
+    /**
+     * Updates the Next Block preview in the GUI
+     */
     private void updateNextBlock() {
         NextShapeInfo nextShape = board.getNextShape();
         if (nextShape != null) {
@@ -109,11 +165,18 @@ public class GameController implements InputEventListener {
         }
     }
 
+    /**
+     * Update the ghost piece landing at
+     */
     private void updateGhostPiece() {
         int[][] ghostData = getGhostPiecePosition();
         viewGuiController.drawGhostPiece(ghostData);
     }
 
+    /**
+     * Finds how far down the brick can fall before colliding
+     * @return
+     */
     private int[][] getGhostPiecePosition() {
         int[][] currentShape = board.getViewData().getBrickData();
         int currentX = board.getViewData().getxPosition();
@@ -136,6 +199,15 @@ public class GameController implements InputEventListener {
         };
     }
 
+    /**
+     * Checks whether it will collide with other block
+     *
+     * @param shape the 2D matrix representing the current brick's shape
+     * @param x the x-coordinate where the shape will be placed
+     * @param y the y-coordinate where the shape will be placed
+     * @return true if a collision will occur; false otherwise
+     */
+
     private boolean checkCollision(int[][] shape, int x,int y) {
         int[][] boardMatrix = board.getBoardMatrix();
 
@@ -155,7 +227,13 @@ public class GameController implements InputEventListener {
     }
 
 
-
+    /**
+     * Handles the "hard drop" event.
+     * Drops the current brick instantly to the bottom and returns the resulting DownData.
+     *
+     * @param event the move event containing event type and source
+     * @return DownData object containing clear row info, updated view data, and lock status
+     */
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
         DownData downData;

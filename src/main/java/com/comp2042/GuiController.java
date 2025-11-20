@@ -28,11 +28,22 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * GuiController manages the visual representation of the Tetris game.
+ * It handles the game board, bricks (active and ghost pieces), timer, score display,
+ * next block preview, pause functionality, and game over screen.
+ *
+ * <p>This controller communicates with an InputEventListener to handle game logic
+ * while maintaining the user interface in sync with the underlying board state.</p>
+ */
 public class GuiController implements Initializable {
 
+    /** The size of each brick in pixels. */
     private static final int BRICK_SIZE = 20;
 
+    /** The Button for pausing the game. */
     public Button pauseButton;
+    /** StackPane containing pause menu. */
     public StackPane pauseMenu;
 
     @FXML
@@ -85,7 +96,13 @@ public class GuiController implements Initializable {
     private Rectangle[][] ghostPieceRectangles;
 
 
-
+    /**
+     * Initializes the GUI components, binds key events, loads digit images,
+     * and prepares the game view.
+     *
+     * @param location  not used
+     * @param resources not used
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gamePanel.setFocusTraversable(true);
@@ -133,6 +150,13 @@ public class GuiController implements Initializable {
 
     }
 
+    /**
+     * Initializes the game board view, creating rectangles for the grid,
+     * active brick, and ghost brick.
+     *
+     * @param boardMatrix 2D array representing the board
+     * @param brick       initial active brick data
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 0; i < boardMatrix.length; i++) {
@@ -179,6 +203,12 @@ public class GuiController implements Initializable {
         timeLine.play();
         startTimer();
     }
+    /**
+     * Returns the color associated with a given brick type ID.
+     *
+     * @param i the ID representing a brick type
+     * @return the corresponding Paint color for the brick
+     */
 
     private Paint getFillColor(int i) {
         switch (i) {
@@ -194,6 +224,12 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Updates the positions and colors of the active brick's rectangles on the UI
+     * based on the current brick view data.
+     *
+     * @param brick the ViewData object representing the brick's current shape and position
+     */
     private void updateBrickPosition(ViewData brick) {
         // Normal brick
         for (int i = 0; i < brick.getBrickData().length; i++) {
@@ -208,11 +244,23 @@ public class GuiController implements Initializable {
         }
 
         }
+    /**
+     * Refreshes the active brick on screen unless the game is paused.
+     *
+     * @param brick the updated brick view data
+     */
+
     private void refreshBrick(ViewData brick) {
         if (!isPause.get()) {
             updateBrickPosition(brick);
         }
     }
+
+    /**
+     * Draws the background board matrix (landed tiles).
+     *
+     * @param board 2D matrix of board colors
+     */
 
     public void refreshGameBackground(int[][] board) {
         for (int i = 0; i < board.length; i++) {
@@ -222,11 +270,25 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Sets the visual appearance of a rectangle based on the brick color.
+     * Applies fill color and rounded corners.
+     *
+     * @param color the integer ID representing the brick color
+     * @param rectangle the Rectangle object to be updated
+     */
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
     }
+
+    /**
+     * Handles both automatic and user-triggered downward movement of the brick.
+     * Checks for row clears and updates score notifications.
+     *
+     * @param event type of downward movement (thread/user)
+     */
 
     private void moveDown(MoveEvent event) {
         if (!isPause.get()) {
@@ -241,9 +303,21 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Sets the listener for input events, allowing the GUI to
+     * communicate user actions (like key presses) to the game logic.
+     *
+     * @param eventListener the InputEventListener to handle user and thread events
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
+
+    /**
+     * Binds the score property to on-screen digit images.
+     *
+     * @param scoreProperty observable score value
+     */
 
     public void bindScore(IntegerProperty scoreProperty) {
         scoreProperty.addListener((obs, oldVal, newVal) -> {
@@ -251,11 +325,22 @@ public class GuiController implements Initializable {
         });
     }
 
+    /**
+     * Binds the line counter property to digit images.
+     *
+     * @param lineProperty observable line count
+     */
+
     public void lineScore(IntegerProperty lineProperty) {
         lineProperty.addListener((obs, oldVal, newVal) -> {
             updateLineImages(newVal.intValue());
         });
     }
+
+    /**
+     * Stops all timelines, shows the game over screen,
+     * and marks the game as finished.
+     */
 
     public void gameOver() {
         timeLine.stop();
@@ -263,6 +348,12 @@ public class GuiController implements Initializable {
         isGameOver.setValue(true);
         if (timerTimeline != null) timerTimeline.stop();
     }
+
+    /**
+     * Resets the entire game state and starts a new session.
+     *
+     * @param actionEvent button event (may be null)
+     */
 
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
@@ -276,6 +367,12 @@ public class GuiController implements Initializable {
         startTimer();
     }
 
+    /**
+     * Resumes the game after being paused.
+     *
+     * @param actionEvent button event
+     */
+
     public void resumeGame(ActionEvent actionEvent) {
         pauseMenu.setVisible(false);
         isPause.set(false);
@@ -283,6 +380,12 @@ public class GuiController implements Initializable {
         if (timerTimeline != null) timerTimeline.play();
         gamePanel.requestFocus();
     }
+
+    /**
+     * Toggles the pause state. Pauses/plays animations and timer.
+     *
+     * @param actionEvent button event
+     */
 
     public void pauseGame(ActionEvent actionEvent) {
         if (isPause.get()) {
@@ -298,16 +401,31 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Exits the application completely.
+     *
+     * @param actionEvent button event
+     */
+
     public void exitGame(ActionEvent actionEvent) {
         System.exit(0);
     }
 
+    /**
+     * Loads the digit images (0-9) from resources into the `digits` array.
+     * These images are later used for displaying scores, lines, and timer digits.
+     */
     private void loadDigitImages() {
         for (int i = 0; i <= 9; i++) {
             digits[i] = new Image(getClass().getResourceAsStream("/digits/" + i + ".png"));
         }
     }
 
+    /**
+     * Updates the timer digit images on the UI based on the remaining time in seconds.
+     *
+     * @param secondsRemaining the number of seconds left in the countdown timer
+     */
     private void updateTimerImages(int secondsRemaining) {
         int minutes = secondsRemaining / 60;
         int seconds = secondsRemaining % 60;
@@ -317,6 +435,11 @@ public class GuiController implements Initializable {
         secTens.setImage(digits[seconds / 10]);
         secOnes.setImage(digits[seconds % 10]);
     }
+
+    /**
+     * Initializes and starts the countdown timer.
+     * When timer reaches zero, triggers game over.
+     */
 
     private void startTimer() {
         loadDigitImages();
@@ -334,6 +457,11 @@ public class GuiController implements Initializable {
         timerTimeline.setCycleCount(Timeline.INDEFINITE);
         timerTimeline.play();
     }
+    /**
+     * Updates the score digit images on the UI based on the current score value.
+     *
+     * @param score the current score to display
+     */
     private void updateScoreImages(int score) {
         int thousands = (score / 1000) % 10;
         int hundreds = (score / 100) % 10;
@@ -346,6 +474,11 @@ public class GuiController implements Initializable {
         scoreOnes.setImage(digits[ones]);
     }
 
+    /**
+     * Updates the line counter digit images on the UI based on the number of cleared lines.
+     *
+     * @param lines the number of lines cleared to display
+     */
     private void updateLineImages(int lines) {
         int hundreds = (lines / 100) % 10;
         int tens = (lines / 10) % 10;
@@ -358,6 +491,13 @@ public class GuiController implements Initializable {
 
     //show next block
     private static final int BLOCK_SIZE = 20;
+
+    /**
+     * Renders a preview of the next block, scaling and centering it inside
+     * the preview panel.
+     *
+     * @param next shape and color data of the next piece
+     */
 
     public void showNextBlock(NextShapeInfo next) {
         nextBlockPane.getChildren().clear(); // clear previous preview
@@ -417,6 +557,11 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Fully restarts the game from the game over menu.
+     * Resets timers, boards, state, and creates a new game session.
+     */
+
 //restart game
     public void restartGame() {
         if (eventListener != null) {
@@ -439,6 +584,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Removes all previously drawn ghost piece rectangles from the grid.
+     */
+
     //Remove old ghost piece
     public void clearGhostPiece() {
         if (ghostPieceRectangles != null) {
@@ -454,6 +603,12 @@ public class GuiController implements Initializable {
     }
 
 
+    /**
+     * Draws the ghost piece using semi-transparent rectangles to show
+     * where the active brick will land.
+     *
+     * @param ghostData 5x? array containing shape and final landing coordinates
+     */
 
     public void drawGhostPiece(int[][] ghostData) {
         clearGhostPiece();  // remove previous ghost bricks
@@ -486,6 +641,11 @@ public class GuiController implements Initializable {
             }
         }
     }
+
+    /**
+     * Instantly drops the brick to its lowest valid position.
+     * Updates score notifications if lines are cleared.
+     */
 
     private void hardDrop() {
         if (eventListener != null && !isPause.get() && !isGameOver.get()) {

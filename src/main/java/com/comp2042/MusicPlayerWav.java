@@ -4,10 +4,21 @@ import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * A simple WAV music player that can play and loop background music.
+ * <p>
+ * Supports loading a WAV file from the classpath and looping it indefinitely.
+ * </p>
+ */
 public class MusicPlayerWav {
+
     private Clip clip;
 
-    //Play background music in loop
+    /**
+     * Plays a WAV file from the specified resource path and loops it continuously.
+     *
+     * @param resourcePath the path to the WAV file within the classpath
+     */
     public void playMusic(String resourcePath) {
         try {
             URL soundUrl = getClass().getResource(resourcePath);
@@ -26,7 +37,9 @@ public class MusicPlayerWav {
         }
     }
 
-    /** Stop the music */
+    /**
+     * Stops the currently playing music if it is running.
+     */
     public void stopMusic() {
         if (clip != null && clip.isRunning()) {
             clip.stop();
