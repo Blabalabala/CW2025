@@ -90,10 +90,19 @@ public class GuiController implements Initializable {
     @FXML
     private Pane nextBlockPane;
 
+    @FXML
+    private ImageView levelHundreds;
+
+    @FXML
+    private ImageView levelTens;
+    @FXML
+    private ImageView levelOnes;
+
 
     private int timeRemaining = 180;
     private Image[] digits = new Image[10];
     private Rectangle[][] ghostPieceRectangles;
+    private int totalLinesCleared = 0;
 
 
     /**
@@ -147,6 +156,7 @@ public class GuiController implements Initializable {
         loadDigitImages();
         updateScoreImages(0);
         updateLineImages(0);
+        updateLevelImages(0);
 
     }
 
@@ -333,7 +343,10 @@ public class GuiController implements Initializable {
 
     public void lineScore(IntegerProperty lineProperty) {
         lineProperty.addListener((obs, oldVal, newVal) -> {
-            updateLineImages(newVal.intValue());
+            int linesCleared = newVal.intValue();
+            updateLineImages(linesCleared);
+            updateLevelImages(linesCleared);
+
         });
     }
 
@@ -365,6 +378,9 @@ public class GuiController implements Initializable {
         isGameOver.set(false);
         timeRemaining = 180;
         startTimer();
+        totalLinesCleared = 0;
+        updateLineImages(0);
+        updateLevelImages(0);
     }
 
     /**
@@ -574,15 +590,17 @@ public class GuiController implements Initializable {
             isGameOver.set(false);
 
             timeRemaining = 180;
+            totalLinesCleared = 0;  // <-- reset here
 
             eventListener.createNewGame();
 
             gamePanel.requestFocus();
-            
+
             if (timeLine != null) timeLine.play();
             startTimer();
         }
     }
+
 
     /**
      * Removes all previously drawn ghost piece rectangles from the grid.
@@ -659,6 +677,53 @@ public class GuiController implements Initializable {
             }
         }
     }
+
+    /**
+     * Updates the level display based on total lines cleared and adjusts the drop speed.
+     * Level starts at 1 and increases as 5 line cleared.
+     *
+     *
+     */
+    private void updateLevelImages(int totalLinesCleared) {
+
+        int level = totalLinesCleared / 5 + 1;  // Level starts at 1
+
+        int hundreds = (level / 100) % 10;
+        int tens = (level / 10) % 10;
+        int ones = level % 10;
+
+        levelHundreds.setImage(digits[hundreds]);
+        levelTens.setImage(digits[tens]);
+        levelOnes.setImage(digits[ones]);
+
+        if (timeLine != null) {
+            timeLine.stop();
+            timeLine.getKeyFrames().setAll(
+                    new KeyFrame(
+                            Duration.millis(getDropIntervalForLevel(level)),
+                            ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+                    )
+            );
+            timeLine.play();
+        }
+    }
+
+
+
+    /**
+     * Returns the drop interval (ms) based on the current level.
+     * Higher levels drop faster.
+     *
+     * @param level the current level
+     * @return drop interval in milliseconds
+     */
+    private double getDropIntervalForLevel(int level) {
+        // Base interval (level 1) is 400ms
+        // Decrease by 20ms per level (example)
+        double interval = 400 - (level - 1) * 40;
+        return Math.max(interval, 100); // minimum 100ms
+    }
+
 
 }
 

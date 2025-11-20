@@ -56,7 +56,27 @@
                     <ImageView fx:id="lineOnes" fitWidth="20" fitHeight="30" />
                 </HBox>
             </VBox>
-        </VBox>
+                <!-- Level -->
+                <VBox fx:id="statusContainer5" alignment="CENTER" spacing="5">
+                    <VBox alignment="CENTER" spacing="5">
+                        <ImageView fitWidth="120" fitHeight="40" preserveRatio="true">
+                            <image>
+                                <Image url="@Level.png" />
+                            </image>
+                        </ImageView>
+
+                        <VBox fx:id="statusContainer6" alignment="CENTER" spacing="10"
+                              style="-fx-padding: 10; -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-color: rgba(0,0,0,0.3); -fx-background-radius: 8;">
+                            <HBox fx:id="levelDisplay" spacing="2" alignment="CENTER">
+                                <ImageView fx:id="levelHundreds" fitWidth="20" fitHeight="30" />
+                                <ImageView fx:id="levelTens" fitWidth="20" fitHeight="30" />
+                                <ImageView fx:id="levelOnes" fitWidth="20" fitHeight="30" />
+                            </HBox>
+                        </VBox>
+                </VBox>
+                </VBox>
+
+            </VBox>
         </VBox>
         </VBox>
 
