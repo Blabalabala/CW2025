@@ -17,6 +17,7 @@ Implemented and Working Properly:
 Background Music – Plays looping music during gameplay.
 Ghost Brick-Show where the falling brick going to land at
 Restart-The game can be restart
+Level-Every 10 line clear will gain a level and brick drop faster
 
 Implemented but Not Working Properly:
 All working as expected
@@ -25,7 +26,7 @@ Features Not Implemented:
 Hold brick feature-Not enough of time
 Main Menu- Not enough of time
 Difficulty-Not enough of time
-Level-Not enough of time
+
 
 New Java Classes:
 
@@ -33,7 +34,7 @@ Added MusicPlayerWav.java-Now has background music
 
 
 Modified Java Classes:
-GuiController.java-Add score label,add timer,add pause and resumeand restart function,add ghost brick function,add using image as timer and score and line counter,add next brick preview
+GuiController.java-Add score label,add timer,add pause and resume and restart function,add ghost brick function,add using image as timer and score and line counter and level counter,add next brick preview
 
 GameController.java-To display line clear score,prevent brick collision function
 
