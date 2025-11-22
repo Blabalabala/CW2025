@@ -30,6 +30,8 @@ public class GameController implements InputEventListener {
 
         // Show the first next block preview
         updateNextBlock();
+        // Show held block (will be empty initially)
+        updateHeldBlock();
     }
 
     /**
@@ -122,6 +124,20 @@ public class GameController implements InputEventListener {
 
         // Show next block
         updateNextBlock();
+        // Show held block (will be empty initially)
+        updateHeldBlock();
+    }
+
+    /**
+     * Updates the Held Block preview in the GUI
+     */
+    private void updateHeldBlock() {
+        HoldShapeInfo heldShape = board.getHeldShape();
+        if (heldShape != null) {
+            viewGuiController.showHoldBlock(heldShape);
+        } else {
+            viewGuiController.clearHoldBlock();
+        }
     }
 
     /**
@@ -243,6 +259,30 @@ public class GameController implements InputEventListener {
         return downData;
     }
 
+    /**
+     * Handles the "hold" event.
+     * Swaps the current brick with the held brick (if any).
+     *
+     * @return HoldEvent containing the new current piece and held piece information, or null if hold was already used
+     */
+    @Override
+    public HoldEvent onHoldEvent() {
+        HoldShapeInfo holdInfo = board.holdBrick();
+        if (holdInfo == null) {
+            return null; // Hold was already used for this piece
+        }
+
+        // Update the view with the new current piece
+        ViewData newViewData = board.getViewData();
+        updateGhostPiece();
+
+        // Update next block preview
+        updateNextBlock();
+        // Update held block preview
+        updateHeldBlock();
+
+        return new HoldEvent(newViewData, holdInfo);
+    }
 
 
 

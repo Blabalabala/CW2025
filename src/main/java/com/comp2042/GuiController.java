@@ -91,6 +91,9 @@ public class GuiController implements Initializable {
     private Pane nextBlockPane;
 
     @FXML
+    private Pane holdBlockPane;
+
+    @FXML
     private ImageView levelHundreds;
 
     @FXML
@@ -138,6 +141,10 @@ public class GuiController implements Initializable {
                     }
                     if (keyEvent.getCode() == KeyCode.SPACE) {
                         hardDrop();
+                        keyEvent.consume();
+                    }
+                    if (keyEvent.getCode() == KeyCode.C) {
+                        hold();
                         keyEvent.consume();
                     }
                 }
@@ -722,6 +729,97 @@ public class GuiController implements Initializable {
         // Decrease by 20ms per level (example)
         double interval = 400 - (level - 1) * 40;
         return Math.max(interval, 100); // minimum 100ms
+    }
+
+    /**
+     * Handles the hold brick action when the 'C' key is pressed.
+     * Swaps the current brick with the held brick (if any).
+     */
+    private void hold() {
+        if (eventListener != null && !isPause.get() && !isGameOver.get()) {
+            HoldEvent holdEvent = eventListener.onHoldEvent();
+            if (holdEvent != null) {
+                // Update the current brick display
+                refreshBrick(holdEvent.getNewCurrentPiece());
+                // Update the held brick display
+                showHoldBlock(holdEvent.getHoldPiece());
+            }
+        }
+    }
+
+    /**
+     * Renders a preview of the held block, scaling and centering it inside
+     * the hold preview panel.
+     *
+     * @param hold shape and color data of the held piece
+     */
+    public void showHoldBlock(HoldShapeInfo hold) {
+        if (holdBlockPane == null) return;
+        
+        holdBlockPane.getChildren().clear(); // clear previous preview
+
+        int[][] shape = hold.getShape();
+        int shapeRows = shape.length;
+        int shapeCols = shape[0].length;
+
+        double paneWidth = holdBlockPane.getPrefWidth();
+        double paneHeight = holdBlockPane.getPrefHeight();
+
+        // Find topmost, bottommost, leftmost, rightmost filled blocks
+        int top = shapeRows, bottom = -1, left = shapeCols, right = -1;
+        for (int i = 0; i < shapeRows; i++) {
+            for (int j = 0; j < shapeCols; j++) {
+                if (shape[i][j] != 0) {
+                    if (i < top) top = i;
+                    if (i > bottom) bottom = i;
+                    if (j < left) left = j;
+                    if (j > right) right = j;
+                }
+            }
+        }
+
+        int usedRows = bottom - top + 1;
+        int usedCols = right - left + 1;
+
+        // Scale block size to fit the pane
+        double padding = 10; // optional padding inside the preview box
+        double blockWidth = (paneWidth - padding * 2) / usedCols;
+        double blockHeight = (paneHeight - padding * 2) / usedRows;
+        double blockSize = Math.min(blockWidth, blockHeight);
+
+        // Make blocks smaller by multiplying by a factor (<1)
+        blockSize *= 0.8; // 80% of available size
+
+        // Calculate offsets to center the used blocks
+        double offsetX = (paneWidth - usedCols * blockSize) / 2;
+        double offsetY = (paneHeight - usedRows * blockSize) / 2;
+
+        for (int i = 0; i < shapeRows; i++) {
+            for (int j = 0; j < shapeCols; j++) {
+                if (shape[i][j] != 0) {
+                    Rectangle rect = new Rectangle(blockSize, blockSize);
+                    rect.setFill(getFillColor(shape[i][j]));
+                    rect.setArcWidth(blockSize / 4);
+                    rect.setArcHeight(blockSize / 4);
+                    rect.setStroke(Color.BLACK);
+                    rect.setStrokeWidth(1);
+
+                    rect.setLayoutX((j - left) * blockSize + offsetX);
+                    rect.setLayoutY((i - top) * blockSize + offsetY);
+
+                    holdBlockPane.getChildren().add(rect);
+                }
+            }
+        }
+    }
+
+    /**
+     * Clears the held block preview pane.
+     */
+    public void clearHoldBlock() {
+        if (holdBlockPane != null) {
+            holdBlockPane.getChildren().clear();
+        }
     }
 
 

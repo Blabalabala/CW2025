@@ -86,4 +86,19 @@ public interface Board {
      * @return the next shape information, or null if no next brick exists
      */
     NextShapeInfo getNextShape();
+
+    /**
+     * Holds the current brick and swaps it with the held brick (if any).
+     * Can only be called once per piece until a new piece is spawned.
+     *
+     * @return HoldShapeInfo containing the held brick's shape and color, or null if hold was already used for this piece
+     */
+    HoldShapeInfo holdBrick();
+
+    /**
+     * Returns information about the currently held brick.
+     *
+     * @return HoldShapeInfo of the held brick, or null if no brick is held
+     */
+    HoldShapeInfo getHeldShape();
 }

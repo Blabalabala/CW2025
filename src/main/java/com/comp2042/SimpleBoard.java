@@ -23,6 +23,9 @@ public class SimpleBoard implements Board {
     private Point currentOffset;
     private final Score score;
     private Brick nextBrick;
+    private Brick heldBrick;
+    private Brick currentBrick;
+    private boolean holdUsed;
 
     /**
      * Constructs a SimpleBoard with the specified width and height.
@@ -114,11 +117,14 @@ public class SimpleBoard implements Board {
     @Override
     public boolean createNewBrick() {
         // If nextBrick exists, make it the current brick
-        Brick currentBrick = nextBrick != null ? nextBrick : brickGenerator.getBrick();
-        brickRotator.setBrick(currentBrick);
+        this.currentBrick = nextBrick != null ? nextBrick : brickGenerator.getBrick();
+        brickRotator.setBrick(this.currentBrick);
 
         // Generate the next brick
         nextBrick = brickGenerator.getBrick();
+
+        // Reset hold flag for new piece
+        holdUsed = false;
 
         // Center and place brick at the top
         int[][] shape = brickRotator.getCurrentShape();
@@ -178,6 +184,8 @@ public class SimpleBoard implements Board {
     public void newGame() {
         currentGameMatrix = new int[width][height];
         score.reset();
+        heldBrick = null;
+        holdUsed = false;
         createNewBrick();
     }
 
@@ -190,5 +198,88 @@ public class SimpleBoard implements Board {
     public NextShapeInfo getNextShape() {
         if (nextBrick == null) return null;
         return new NextShapeInfo(nextBrick.getShapeMatrix().get(0), 0); // default rotation index
+    }
+
+    /**
+     * Holds the current brick and swaps it with the held brick (if any).
+     * Can only be called once per piece until a new piece is spawned.
+     *
+     * @return HoldShapeInfo containing the held brick's shape and color, or null if hold was already used for this piece
+     */
+    @Override
+    public HoldShapeInfo holdBrick() {
+        // Can only hold once per piece
+        if (holdUsed || currentBrick == null) {
+            return null;
+        }
+
+        // Get the current brick's shape and color code
+        int[][] currentShape = brickRotator.getCurrentShape();
+        int colorCode = extractColorCode(currentShape);
+
+        // Swap current and held brick
+        Brick temp = heldBrick;
+        heldBrick = currentBrick;
+        currentBrick = temp;
+
+        // Mark hold as used for the piece that was just held
+        holdUsed = true;
+
+        // If there was a held brick, make it the current brick
+        if (currentBrick != null) {
+            brickRotator.setBrick(currentBrick);
+            // Center and place brick at the top
+            int[][] shape = brickRotator.getCurrentShape();
+            int shapeWidth = shape[0].length;
+            int centerX = (height - shapeWidth) / 2;
+            currentOffset = new Point(centerX, 0);
+            // Reset hold flag for the swapped-in piece (it can be held again)
+            holdUsed = false;
+        } else {
+            // No held brick, create a new one
+            createNewBrick();
+        }
+
+        // Return the shape info of what's now in hold
+        if (heldBrick != null) {
+            int[][] heldShape = heldBrick.getShapeMatrix().get(0);
+            int heldColorCode = extractColorCode(heldShape);
+            return new HoldShapeInfo(heldShape, heldColorCode);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns information about the currently held brick.
+     *
+     * @return HoldShapeInfo of the held brick, or null if no brick is held
+     */
+    @Override
+    public HoldShapeInfo getHeldShape() {
+        if (heldBrick == null) {
+            return null;
+        }
+        int[][] heldShape = heldBrick.getShapeMatrix().get(0);
+        int colorCode = extractColorCode(heldShape);
+        return new HoldShapeInfo(heldShape, colorCode);
+    }
+
+    /**
+     * Extracts the color code from a brick shape matrix.
+     * Finds the first non-zero value in the matrix.
+     *
+     * @param shape the brick shape matrix
+     * @return the color code (1-7), or 0 if no color found
+     */
+    private int extractColorCode(int[][] shape) {
+        for (int[] row : shape) {
+            for (int cell : row) {
+                if (cell != 0) {
+                    return cell;
+                }
+            }
+        }
+        return 0;
     }
 }

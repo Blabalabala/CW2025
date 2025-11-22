@@ -61,4 +61,11 @@ public interface InputEventListener {
      * @return true if the brick can safely move down; false otherwise
      */
     boolean canMoveDown(ViewData brick, int newY);
+
+    /**
+     * Handles the event when a brick is held (swapped with the held brick).
+     *
+     * @return HoldEvent containing the new current piece and held piece information, or null if hold was already used
+     */
+    HoldEvent onHoldEvent();
 }

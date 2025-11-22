@@ -12,7 +12,7 @@
     <GridPane fx:id="brickPanel" hgap="1" vgap="1" />
 
     <!-- Timer and number of line clear show beside of the frame -->
-    <HBox alignment="CENTER" spacing="20">
+    <HBox alignment="CENTER" spacing="20" style="-fx-padding: 0 0 0 200;">
 
         <VBox alignment="CENTER" spacing="15">
 
@@ -125,6 +125,19 @@
                        style="-fx-background-color: rgba(0,0,0,0.3);"
                        alignment="CENTER">
                 <Pane fx:id="nextBlockPane" prefWidth="120" prefHeight="80"/>
+            </StackPane>
+        </VBox>
+        <VBox alignment="CENTER" spacing="2"
+              prefHeight="150" maxHeight="150" minHeight="150"
+              prefWidth="150" maxWidth="150" minWidth="150"
+              style="-fx-padding: 5; -fx-border-color: white; -fx-border-width: 5; -fx-border-radius: 5;">
+            <Label text="Hold" style="-fx-text-fill: white; -fx-font-size: 20;-fx-font-weight: bold;" />
+
+            <StackPane fx:id="holdBlockContainer"
+                       prefWidth="70" prefHeight="50"
+                       style="-fx-background-color: rgba(0,0,0,0.3);"
+                       alignment="CENTER">
+                <Pane fx:id="holdBlockPane" prefWidth="120" prefHeight="80"/>
             </StackPane>
         </VBox>
 
